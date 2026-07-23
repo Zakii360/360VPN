@@ -1322,6 +1322,55 @@
                     <div class="panel">
 
                         <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">
+                                    CLOUDFLARE
+                                </span>
+                                <h3>Dashboard connection</h3>
+                            </div>
+                        </div>
+
+                        <p class="muted" style="margin: 0 0 16px;">
+                            Connects this dashboard to your Cloudflare Zero Trust account
+                            (via the Pages Functions deployed with this site). The dashboard
+                            token below must match the <code>DASH_TOKEN</code> you set in your
+                            Cloudflare Pages project's environment variables.
+                        </p>
+
+                        <div class="form-row">
+                            <label for="dashTokenInput">Dashboard token</label>
+                            <input type="password" id="dashTokenInput" placeholder="Paste your DASH_TOKEN" />
+                        </div>
+
+                        <button class="btn btn-primary" id="saveDashTokenButton" type="button">
+                            Connect
+                        </button>
+
+                        <p class="muted" id="dashConnectionStatus" style="margin-top: 12px;"></p>
+                    </div>
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+                            <div>
+                                <span class="eyebrow">
+                                    ENROLLED DEVICES
+                                </span>
+                                <h3>WARP devices</h3>
+                            </div>
+                        </div>
+
+                        <p class="muted" style="margin: 0 0 16px;">
+                            Install the Cloudflare WARP app on a device and sign in with your
+                            Zero Trust team name to enroll it — it'll show up here.
+                        </p>
+
+                        <div id="warpDeviceList"></div>
+                    </div>
+
+                    <div class="panel">
+
+                        <div class="panel-header">
 
                             <div>
                                 <span class="eyebrow">
@@ -1641,6 +1690,7 @@
          FRONTEND APPLICATION
     ========================================== -->
 
+    <script src="api.js"></script>
     <script src="app.js"></script>
 
 </body>

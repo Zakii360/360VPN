@@ -48,7 +48,13 @@ const VPN_APP = {
         fastest: true
     },
 
-    blockedDomains: []
+    blockedDomains: [],
+
+    // Backend-managed devices (see api.js). When a device is selected,
+    // protection toggles and blocked domains sync to that device's real
+    // NextDNS filtering profile instead of just local storage.
+    devices: [],
+    activeDeviceId: null
 };
 
 
@@ -945,9 +951,181 @@ function initializeProtectionSettings() {
                             : "disabled"
                     }.`
                 );
+
+                syncActiveDeviceProtection(setting);
             }
         );
     });
+}
+
+
+function initializeDashboardSettings() {
+
+    const tokenInput =
+        $("#dashTokenInput");
+
+    const saveButton =
+        $("#saveDashTokenButton");
+
+    const status =
+        $("#dashConnectionStatus");
+
+    if (!tokenInput || !saveButton) {
+        return;
+    }
+
+    function refreshStatus() {
+        status.textContent =
+            window.Api && Api.isBackendConfigured()
+                ? "Connected."
+                : "Not connected — protection toggles and blocked domains are local-only until you connect.";
+    }
+
+    if (window.Api && Api.isBackendConfigured()) {
+        tokenInput.value = "••••••••";
+    }
+
+    refreshStatus();
+
+    saveButton.addEventListener(
+        "click",
+        () => {
+
+            const value =
+                tokenInput.value.trim();
+
+            if (!value || value === "••••••••") {
+                return;
+            }
+
+            Api.configure("", value);
+
+            refreshStatus();
+
+            showToast("Dashboard connected. Syncing...");
+
+            loadProtectionFromBackend();
+            loadEnrolledDevices();
+        }
+    );
+}
+
+
+/* =========================================
+   CLOUDFLARE GATEWAY SYNC
+   (see api.js — no-ops until Settings has a dashboard token configured)
+========================================= */
+
+async function syncActiveDeviceProtection(setting) {
+
+    if (
+        !window.Api ||
+        !Api.isBackendConfigured() ||
+        !setting
+    ) {
+        return;
+    }
+
+    try {
+
+        await Api.setProtection(
+            setting,
+            VPN_APP.protection[setting]
+        );
+
+    } catch (error) {
+
+        showToast(
+            `Couldn't sync to Cloudflare: ${error.message}`
+        );
+    }
+}
+
+
+async function loadProtectionFromBackend() {
+
+    if (
+        !window.Api ||
+        !Api.isBackendConfigured()
+    ) {
+        return;
+    }
+
+    try {
+
+        const remote =
+            await Api.getProtection();
+
+        Object.assign(
+            VPN_APP.protection,
+            remote
+        );
+
+        $$(".toggle-input").forEach(input => {
+            const setting = input.dataset.setting;
+            if (setting && Object.prototype.hasOwnProperty.call(remote, setting)) {
+                input.checked = Boolean(remote[setting]);
+            }
+        });
+
+    } catch (error) {
+
+        showToast(
+            `Couldn't reach Cloudflare: ${error.message}`
+        );
+    }
+}
+
+
+async function loadEnrolledDevices() {
+
+    if (
+        !window.Api ||
+        !Api.isBackendConfigured()
+    ) {
+        return;
+    }
+
+    try {
+
+        VPN_APP.devices =
+            await Api.listDevices();
+
+        renderEnrolledDevices();
+
+    } catch (error) {
+
+        showToast(
+            `Couldn't reach Cloudflare: ${error.message}`
+        );
+    }
+}
+
+
+function renderEnrolledDevices() {
+
+    const list =
+        $("#warpDeviceList");
+
+    if (!list) {
+        return;
+    }
+
+    if (!VPN_APP.devices.length) {
+        list.innerHTML =
+            "<p class=\"muted\">No devices enrolled yet — install WARP and sign in on a device to see it here.</p>";
+        return;
+    }
+
+    list.innerHTML =
+        VPN_APP.devices
+            .map(device =>
+                `<div class="device-row">
+                    <span>${device.name}</span>
+                    <span class="muted">${device.user || ""}</span>
+                </div>`
+            )
+            .join("");
 }
 
 
@@ -1214,6 +1392,12 @@ function addBlockedDomain(domain) {
         `${normalized} added to blocked domains.`
     );
 
+    if (window.Api && Api.isBackendConfigured()) {
+        Api.addDomain("block", normalized).catch(error =>
+            showToast(`Couldn't sync to Cloudflare: ${error.message}`)
+        );
+    }
+
     return true;
 }
 
@@ -1233,6 +1417,12 @@ function removeBlockedDomain(domain) {
     showToast(
         `${domain} removed from blocked domains.`
     );
+
+    if (window.Api && Api.isBackendConfigured()) {
+        Api.removeDomain("block", domain).catch(error =>
+            showToast(`Couldn't sync to Cloudflare: ${error.message}`)
+        );
+    }
 }
 
 
@@ -1656,6 +1846,12 @@ function initializeApp() {
     renderBlockedDomains();
 
     updateConnectionUI();
+
+    initializeDashboardSettings();
+
+    loadProtectionFromBackend();
+
+    loadEnrolledDevices();
 
     console.info(
         `360VPN frontend initialized — v${VPN_APP.version}`
