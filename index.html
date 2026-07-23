@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="360VPN — Private, secure browsing with intelligent network protection and customizable filtering."
+    >
+
+    <meta
+        name="theme-color"
+        content="#0b0d10"
+    >
+
+    <title>360VPN</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!--
+        360VPN
+        Frontend-only dashboard — Step 1
+
+        Backend integration points are intentionally not implemented yet.
+
+        Planned Step 2 integration:
+        - VPN connection API
+        - WireGuard configuration
+        - Server selection
+        - Real connection state
+        - DNS filtering
+        - Filtering policy management
+        - Device management
+    -->
+
+    <div class="app-shell">
+
+        <!-- =========================================
+             SIDEBAR
+        ========================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div class="brand-mark">
+                    360
+                </div>
+
+                <div class="brand-name">
+                    VPN
+                </div>
+            </div>
+
+            <nav class="main-navigation" aria-label="Main navigation">
+
+                <button
+                    class="nav-item active"
+                    type="button"
+                    data-view="overview"
+                >
+                    <span class="nav-icon">◉</span>
+                    <span>Overview</span>
+                </button>
+
+                <button
+                    class="nav-item"
+                    type="button"
+                    data-view="protection"
+                >
+                    <span class="nav-icon">◇</span>
+                    <span>Protection</span>
+                </button>
+
+                <button
+                    class="nav-item"
+                    type="button"
+                    data-view="locations"
+                >
+                    <span class="nav-icon">⌖</span>
+                    <span>Locations</span>
+                </button>
+
+                <button
+                    class="nav-item"
+                    type="button"
+                    data-view="devices"
+                >
+                    <span class="nav-icon">□</span>
+                    <span>Devices</span>
+                </button>
+
+                <button
+                    class="nav-item"
+                    type="button"
+                    data-view="settings"
+                >
+                    <span class="nav-icon">⚙</span>
+                    <span>Settings</span>
+                </button>
+
+            </nav>
+
+            <div class="sidebar-footer">
+
+                <div class="service-status">
+                    <span class="status-dot"></span>
+
+                    <div>
+                        <strong>360VPN</strong>
+                        <span>Ready</span>
+                    </div>
+                </div>
+
+                <div class="version-label">
+                    Client v1.0
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================================
+             MAIN CONTENT
+        ========================================== -->
+
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    type="button"
+                    aria-label="Open navigation"
+                >
+                    ☰
+                </button>
+
+                <div class="breadcrumb">
+                    360VPN
+                    <span>/</span>
+                    <strong id="pageTitle">Overview</strong>
+                </div>
+
+                <div class="topbar-actions">
+
+                    <button
+                        class="icon-button"
+                        type="button"
+                        id="notificationsButton"
+                        aria-label="Notifications"
+                    >
+                        ♢
+                    </button>
+
+                    <button
+                        class="profile-button"
+                        type="button"
+                        id="profileButton"
+                    >
+                        <span class="profile-avatar">
+                            Z
+                        </span>
+
+                        <span class="profile-name">
+                            Local Device
+                        </span>
+
+                        <span class="profile-chevron">
+                            ▾
+                        </span>
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- =========================================
+                 VIEW: OVERVIEW
+            ========================================== -->
+
+            <section
+                class="page-view active"
+                id="view-overview"
+                data-view-panel="overview"
+            >
+
+                <div class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            PRIVATE NETWORK
+                        </div>
+
+                        <h1>
+                            Your connection
+                        </h1>
+
+                        <p>
+                            Control your network privacy and protection from one place.
+                        </p>
+                    </div>
+
+                    <div class="header-status">
+                        <span class="status-dot"></span>
+                        <span id="headerConnectionStatus">
+                            Disconnected
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <!-- CONNECTION CARD -->
+
+                <div class="connection-card">
+
+                    <div class="connection-card-main">
+
+                        <div class="connection-indicator">
+                            <div
+                                class="connection-ring"
+                                id="connectionRing"
+                            >
+                                <div class="connection-ring-inner">
+                                    <span
+                                        class="connection-icon"
+                                        id="connectionIcon"
+                                    >
+                                        ◌
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="connection-details">
+
+                            <span class="connection-label">
+                                CONNECTION STATUS
+                            </span>
+
+                            <h2 id="connectionStatus">
+                                Not connected
+                            </h2>
+
+                            <p id="connectionDescription">
+                                Your internet connection is currently using your normal network.
+                            </p>
+
+                            <div class="connection-meta">
+
+                                <span>
+                                    <strong>Location</strong>
+                                    <span id="currentLocation">
+                                        Automatic
+                                    </span>
+                                </span>
+
+                                <span>
+                                    <strong>Protocol</strong>
+                                    <span id="currentProtocol">
+                                        WireGuard
+                                    </span>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="connection-card-action">
+
+                        <button
+                            class="primary-button connect-button"
+                            id="connectButton"
+                            type="button"
+                        >
+                            <span id="connectButtonText">
+                                Connect
+                            </span>
+                        </button>
+
+                        <span class="action-hint">
+                            Secure your connection
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUICK STATS -->
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            CONNECTION
+                        </span>
+
+                        <h2>
+                            Network overview
+                        </h2>
+                    </div>
+
+                </div>
+
+                <div class="stats-grid">
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-label">
+                                IP ADDRESS
+                            </span>
+
+                            <span class="stat-icon">
+                                #
+                            </span>
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="ipAddress"
+                        >
+                            Not connected
+                        </div>
+
+                        <div class="stat-footer">
+                            <span>
+                                Public address
+                            </span>
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-label">
+                                LATENCY
+                            </span>
+
+                            <span class="stat-icon">
+                                ◷
+                            </span>
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="latencyValue"
+                        >
+                            —
+                        </div>
+
+                        <div class="stat-footer">
+                            <span>
+                                Connection response
+                            </span>
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-label">
+                                PROTECTION
+                            </span>
+
+                            <span class="stat-icon">
+                                ◇
+                            </span>
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="protectionStatus"
+                        >
+                            Active
+                        </div>
+
+                        <div class="stat-footer">
+                            <span>
+                                Filtering engine
+                            </span>
+                        </div>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-label">
+                                SESSION
+                            </span>
+
+                            <span class="stat-icon">
+                                ⏱
+                            </span>
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="sessionTime"
+                        >
+                            00:00:00
+                        </div>
+
+                        <div class="stat-footer">
+                            <span>
+                                Current connection
+                            </span>
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- LOWER GRID -->
+
+                <div class="dashboard-grid">
+
+                    <!-- PROTECTION SUMMARY -->
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    SECURITY
+                                </span>
+
+                                <h3>
+                                    Protection
+                                </h3>
+                            </div>
+
+                            <button
+                                class="text-button"
+                                type="button"
+                                data-navigate="protection"
+                            >
+                                Manage
+                            </button>
+
+                        </div>
+
+                        <div class="protection-list">
+
+                            <div class="protection-row">
+
+                                <div class="protection-name">
+                                    <span class="protection-status enabled"></span>
+
+                                    <div>
+                                        <strong>
+                                            Threat protection
+                                        </strong>
+
+                                        <span>
+                                            Malware and phishing
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <span class="protection-state">
+                                    ON
+                                </span>
+
+                            </div>
+
+
+                            <div class="protection-row">
+
+                                <div class="protection-name">
+                                    <span class="protection-status enabled"></span>
+
+                                    <div>
+                                        <strong>
+                                            Content filtering
+                                        </strong>
+
+                                        <span>
+                                            Family protection
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <span class="protection-state">
+                                    ON
+                                </span>
+
+                            </div>
+
+
+                            <div class="protection-row">
+
+                                <div class="protection-name">
+                                    <span class="protection-status enabled"></span>
+
+                                    <div>
+                                        <strong>
+                                            Trusted domains
+                                        </strong>
+
+                                        <span>
+                                            360 ecosystem
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <span class="protection-state">
+                                    ON
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CURRENT LOCATION -->
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    VPN SERVER
+                                </span>
+
+                                <h3>
+                                    Current location
+                                </h3>
+                            </div>
+
+                            <button
+                                class="text-button"
+                                type="button"
+                                data-navigate="locations"
+                            >
+                                Change
+                            </button>
+
+                        </div>
+
+                        <div class="location-preview">
+
+                            <div class="location-flag">
+                                US
+                            </div>
+
+                            <div class="location-info">
+
+                                <strong id="locationName">
+                                    Automatic
+                                </strong>
+
+                                <span id="locationCity">
+                                    Best available server
+                                </span>
+
+                            </div>
+
+                            <span class="location-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <div class="location-note">
+                            Server selection will become available when the VPN backend is connected.
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- TRUSTED DOMAIN NOTICE -->
+
+                <div class="trusted-domain-banner">
+
+                    <div class="trusted-domain-icon">
+                        ✓
+                    </div>
+
+                    <div class="trusted-domain-content">
+
+                        <strong>
+                            360-search.com is trusted
+                        </strong>
+
+                        <span>
+                            360-search.com and its subdomains are permanently included in the 360VPN trusted domain list.
+                        </span>
+
+                    </div>
+
+                    <span class="trusted-badge">
+                        TRUSTED
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 VIEW: PROTECTION
+            ========================================== -->
+
+            <section
+                class="page-view"
+                id="view-protection"
+                data-view-panel="protection"
+            >
+
+                <div class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            NETWORK SECURITY
+                        </div>
+
+                        <h1>
+                            Protection
+                        </h1>
+
+                        <p>
+                            Decide what 360VPN should block and what it should always allow.
+                        </p>
+                    </div>
+
+                    <div class="protection-overall">
+                        <span class="status-dot"></span>
+                        Protection active
+                    </div>
+
+                </div>
+
+
+                <div class="protection-layout">
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    FILTERING
+                                </span>
+
+                                <h3>
+                                    Protection categories
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="settings-list">
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Malware
+                                    </strong>
+
+                                    <span>
+                                        Block known malicious websites and downloads.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="malware"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Phishing
+                                    </strong>
+
+                                    <span>
+                                        Block known phishing and credential theft pages.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="phishing"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Adult content
+                                    </strong>
+
+                                    <span>
+                                        Block websites categorized as adult content.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="adult"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Gambling
+                                    </strong>
+
+                                    <span>
+                                        Block online gambling and betting websites.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="gambling"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Drugs
+                                    </strong>
+
+                                    <span>
+                                        Block websites promoting illegal drugs.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="drugs"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Social media
+                                    </strong>
+
+                                    <span>
+                                        Optional category blocking for social platforms.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    data-setting="social"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    TRUST
+                                </span>
+
+                                <h3>
+                                    Trusted domains
+                                </h3>
+                            </div>
+
+                            <span class="panel-badge">
+                                Protected
+                            </span>
+
+                        </div>
+
+                        <div class="trusted-domain-list">
+
+                            <div class="domain-item permanent">
+
+                                <div class="domain-symbol">
+                                    ✓
+                                </div>
+
+                                <div class="domain-copy">
+
+                                    <strong>
+                                        360-search.com
+                                    </strong>
+
+                                    <span>
+                                        Permanent 360 trusted domain
+                                    </span>
+
+                                </div>
+
+                                <span class="domain-status">
+                                    ALWAYS ALLOWED
+                                </span>
+
+                            </div>
+
+
+                            <div class="domain-item">
+
+                                <div class="domain-symbol">
+                                    +
+                                </div>
+
+                                <div class="domain-copy">
+
+                                    <strong>
+                                        Add a trusted domain
+                                    </strong>
+
+                                    <span>
+                                        Your custom allowlist
+                                    </span>
+
+                                </div>
+
+                                <button
+                                    class="small-button"
+                                    type="button"
+                                    id="addTrustedDomainButton"
+                                >
+                                    Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CUSTOM RULES -->
+
+                <div class="panel custom-rules-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <span class="eyebrow">
+                                CUSTOM RULES
+                            </span>
+
+                            <h3>
+                                Blocked domains
+                            </h3>
+                        </div>
+
+                        <button
+                            class="secondary-button"
+                            type="button"
+                            id="addBlockedDomainButton"
+                        >
+                            Add domain
+                        </button>
+
+                    </div>
+
+                    <div
+                        class="empty-state"
+                        id="blockedDomainsEmpty"
+                    >
+
+                        <div class="empty-icon">
+                            —
+                        </div>
+
+                        <strong>
+                            No custom domains blocked
+                        </strong>
+
+                        <span>
+                            Add a domain to create a custom block rule.
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="domain-table"
+                        id="blockedDomainsList"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 VIEW: LOCATIONS
+            ========================================== -->
+
+            <section
+                class="page-view"
+                id="view-locations"
+                data-view-panel="locations"
+            >
+
+                <div class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            VPN NETWORK
+                        </div>
+
+                        <h1>
+                            Locations
+                        </h1>
+
+                        <p>
+                            Choose where your VPN connection will exit to the internet.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="location-grid">
+
+                    <button
+                        class="server-card selected"
+                        type="button"
+                        data-location="automatic"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                AUTO
+                            </span>
+
+                            <span class="server-status">
+                                Recommended
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            Automatic
+                        </strong>
+
+                        <span>
+                            Select the best available server
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="server-card"
+                        type="button"
+                        data-location="united-states"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                US
+                            </span>
+
+                            <span class="server-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            United States
+                        </strong>
+
+                        <span>
+                            Server availability pending
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="server-card"
+                        type="button"
+                        data-location="canada"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                CA
+                            </span>
+
+                            <span class="server-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            Canada
+                        </strong>
+
+                        <span>
+                            Server availability pending
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="server-card"
+                        type="button"
+                        data-location="united-kingdom"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                UK
+                            </span>
+
+                            <span class="server-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            United Kingdom
+                        </strong>
+
+                        <span>
+                            Server availability pending
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="server-card"
+                        type="button"
+                        data-location="germany"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                DE
+                            </span>
+
+                            <span class="server-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            Germany
+                        </strong>
+
+                        <span>
+                            Server availability pending
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="server-card"
+                        type="button"
+                        data-location="japan"
+                    >
+
+                        <div class="server-card-top">
+
+                            <span class="country-code">
+                                JP
+                            </span>
+
+                            <span class="server-latency">
+                                —
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            Japan
+                        </strong>
+
+                        <span>
+                            Server availability pending
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="info-banner">
+
+                    <strong>
+                        VPN infrastructure not connected
+                    </strong>
+
+                    <span>
+                        These locations are UI-ready. Real server availability and latency will be provided by the Step 2 VPN backend.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 VIEW: DEVICES
+            ========================================== -->
+
+            <section
+                class="page-view"
+                id="view-devices"
+                data-view-panel="devices"
+            >
+
+                <div class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            CONNECTED HARDWARE
+                        </div>
+
+                        <h1>
+                            Devices
+                        </h1>
+
+                        <p>
+                            Manage devices that can connect to your 360VPN network.
+                        </p>
+                    </div>
+
+                    <button
+                        class="primary-button"
+                        type="button"
+                        id="addDeviceButton"
+                    >
+                        Add device
+                    </button>
+
+                </div>
+
+
+                <div class="device-list">
+
+                    <article class="device-card">
+
+                        <div class="device-icon">
+                            PC
+                        </div>
+
+                        <div class="device-info">
+
+                            <strong>
+                                This device
+                            </strong>
+
+                            <span>
+                                Windows • Current session
+                            </span>
+
+                        </div>
+
+                        <div class="device-state">
+
+                            <span class="status-dot"></span>
+
+                            <span>
+                                Active
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="empty-device-note">
+
+                    <strong>
+                        Device management is ready for backend integration.
+                    </strong>
+
+                    <span>
+                        Step 2 will connect this interface to WireGuard configuration generation and device enrollment.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 VIEW: SETTINGS
+            ========================================== -->
+
+            <section
+                class="page-view"
+                id="view-settings"
+                data-view-panel="settings"
+            >
+
+                <div class="page-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            CONFIGURATION
+                        </div>
+
+                        <h1>
+                            Settings
+                        </h1>
+
+                        <p>
+                            Configure how the 360VPN client behaves.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="settings-grid">
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    CONNECTION
+                                </span>
+
+                                <h3>
+                                    VPN behavior
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="settings-list">
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Auto-connect
+                                    </strong>
+
+                                    <span>
+                                        Connect automatically when the device starts.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    data-setting="autoconnect"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Kill switch
+                                    </strong>
+
+                                    <span>
+                                        Block network traffic if the VPN connection drops.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="killswitch"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+
+                            <label class="setting-row">
+
+                                <div class="setting-copy">
+
+                                    <strong>
+                                        Use fastest server
+                                    </strong>
+
+                                    <span>
+                                        Automatically select the lowest-latency available server.
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    type="checkbox"
+                                    class="toggle-input"
+                                    checked
+                                    data-setting="fastest"
+                                >
+
+                                <span class="toggle"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <span class="eyebrow">
+                                    DNS
+                                </span>
+
+                                <h3>
+                                    DNS protection
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="dns-status">
+
+                            <div class="dns-status-icon">
+                                ✓
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Protected DNS
+                                </strong>
+
+                                <span>
+                                    Filtering will be enforced by the VPN gateway.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="dns-note">
+                            DNS configuration will be supplied by the 360VPN backend in Step 2.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel about-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <span class="eyebrow">
+                                ABOUT
+                            </span>
+
+                            <h3>
+                                360VPN
+                            </h3>
+                        </div>
+
+                    </div>
+
+                    <div class="about-content">
+
+                        <p>
+                            360VPN is designed to provide a private network connection with optional security and content filtering controls.
+                        </p>
+
+                        <p>
+                            This dashboard is the frontend layer. The VPN infrastructure, authentication, WireGuard management, and filtering enforcement will be connected separately.
+                        </p>
+
+                        <div class="about-links">
+
+                            <a
+                                href="https://360-search.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                360 Search
+                            </a>
+
+                            <span>•</span>
+
+                            <span>
+                                Client v1.0
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================
+         DOMAIN MODAL
+    ========================================== -->
+
+    <div
+        class="modal-backdrop"
+        id="domainModal"
+        hidden
+    >
+
+        <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="domainModalTitle"
+        >
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="eyebrow">
+                        CUSTOM RULE
+                    </span>
+
+                    <h2 id="domainModalTitle">
+                        Add domain
+                    </h2>
+                </div>
+
+                <button
+                    class="modal-close"
+                    type="button"
+                    id="closeDomainModal"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <label
+                    class="input-label"
+                    for="domainInput"
+                >
+                    Domain
+                </label>
+
+                <input
+                    type="text"
+                    id="domainInput"
+                    class="text-input"
+                    placeholder="example.com"
+                    autocomplete="off"
+                >
+
+                <p class="input-help">
+                    Enter a domain without the protocol. For example:
+                    <strong>example.com</strong>
+                </p>
+
+                <div
+                    class="modal-error"
+                    id="domainModalError"
+                    hidden
+                ></div>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    class="secondary-button"
+                    type="button"
+                    id="cancelDomainModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    class="primary-button"
+                    type="button"
+                    id="saveDomainButton"
+                >
+                    Add domain
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         NOTIFICATION
+    ========================================== -->
+
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+        hidden
+    >
+        <span
+            class="toast-icon"
+            id="toastIcon"
+        >
+            ✓
+        </span>
+
+        <span id="toastMessage">
+            Saved
+        </span>
+    </div>
+
+
+    <!-- =========================================
+         FRONTEND APPLICATION
+    ========================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
